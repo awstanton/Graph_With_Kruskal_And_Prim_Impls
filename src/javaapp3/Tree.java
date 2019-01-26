@@ -35,25 +35,23 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
     public int compare(T t1, T t2) {
         return t1.compareTo(t2);
     }
-    // later on, work on better way of constructing these objects
-    //Tree() {
-    //    root = null;
-    //}
-    //Tree(T t) { 
-    //    root = t;
-    //}
-/*
-    public static void createTree() {
-        Tree t = new Tree();
-        t.elements = new T[1];
-        t.root = elements[0];
-        root.left = null;
-        root.right = null;
+    public Tree() {
+        root = null;
     }
-*/
+    public Tree(T element) {
+        root = new TreeElement(element);
+    }
+    public Tree(TreeElement<T> element) {
+        root = element;
+    }
+    
     // Specify what behavior is on failed insert, think of exceptions and how to handle them
     @Override
     public boolean insert(T element) {
+        System.out.println(element);
+        if (element == null) {
+            return false;
+        }
         if (root == null) {
             root = new TreeElement(element);
 	}
@@ -64,6 +62,7 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
 		if (compare(element, temp.element) <= 0) {
                     if (temp.left == null) {
 			temp.left = new TreeElement(element);
+                        temp.left.parent = temp;
 			done = true;
                     }
                     else {
@@ -73,6 +72,7 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
 		else {
                     if (temp.right == null) {
 			temp.right = new TreeElement(element);
+                        temp.right.parent = temp;
 			done = true;
                     }
                     else {
@@ -85,7 +85,7 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
     }
     @Override
     public T search(T element) {
-        if (root == null) {
+        if (root == null || element == null) {
             return null;
         }
         else {
@@ -107,7 +107,7 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
     // Specify what behavior is on failed insert, think of exceptions and how to handle them
     @Override
     public boolean delete(T element) {
-        if (root == null) {
+        if (root == null || element == null) {
             return false;
         }
         else {
@@ -179,3 +179,23 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
         }
     }
 }
+
+
+
+
+// later on, work on better way of constructing these objects
+    //Tree() {
+    //    root = null;
+    //}
+    //Tree(T t) { 
+    //    root = t;
+    //}
+/*
+    public static void createTree() {
+        Tree t = new Tree();
+        t.elements = new T[1];
+        t.root = elements[0];
+        root.left = null;
+        root.right = null;
+    }
+*/
