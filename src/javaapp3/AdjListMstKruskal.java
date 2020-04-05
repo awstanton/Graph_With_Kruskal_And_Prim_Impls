@@ -1,46 +1,44 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package javaapp3;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- *
- * @author Andrew
- */
-
 // THE ERROR WAS I WAS USING AdjList.Edge, not AdjList<T>.Edge!!!!!!!!!!!
-public class AdjListMstKruskal<T extends Comparable<T>> extends AdjListMstAlgo<T> {
+public class AdjListMstKruskal<T extends Comparable<T>> implements AdjListMstAlgo<T> {
 
-    public Tree<AdjList<T>.Edge> adjListMstAlgo(AdjList<T> a) {
-        Tree<AdjList<T>.Edge> mstEdgeSet = new Tree<AdjList<T>.Edge>();
+    @Override
+    public AdjList<T> adjListMstAlgo(AdjList<T> a) {
+    
         dsjntSetDataStruct<AdjList<T>.Vertex> disjointSet = new dsjntSetDataStruct<>();
-        
-        ArrayList<AdjList<T>.Edge> tempEdgeSet = new ArrayList<>();
+        ArrayList<AdjList<T>.Edge> tempEdges = new ArrayList<>(a.getEdgeCount()); // pass in count to ensure no automatic reallocation
         
         for (AdjList<T>.Vertex v : a.getL()) {
             disjointSet.makeset(v);
             AdjList<T>.Edge temp = v.first;
             while (temp != null) {
-                tempEdgeSet.add(temp);
+                tempEdges.add(temp);
+                temp = temp.next;
             }
         }
-        //ArrayList<dsjntSetElmnt<AdjList.Vertex>> dseList = new ArrayList<>();
-        //MAYBE RECREATE EDGE SET TO REFER TO REPRESENTATIVES SET IN DISJOINT SET DATA STRUCTURE CLASS
-        // BUT IN THAT CASE ENSURE THE COMPLEXITY PROPERTIES ARE SATISFIED
         
-        // ASSUMING THE EDGES' DATA IS THEIR WEIGHT
-        Collections.sort(tempEdgeSet);
-        for (AdjList<T>.Edge e : tempEdgeSet) {
+        // initialize vertices
+        AdjList<T> mst = new AdjList<>(a.getVertexCount());
+        for (int index = 0; index < a.getL().size(); ++index)
+            mst.createVertex(a.getL().get(index).data);
+        
+        // sort edges
+        Collections.sort(tempEdges);
+        for (AdjList<T>.Edge e : tempEdges) {
             if (disjointSet.findSet(e.fromVertex) != disjointSet.findSet(e.toVertex)) {
-                mstEdgeSet.insert(e);
+                // add TWO edges TOTAL (for undirected pair of vertices) to mst since it is UNDIRECTED
+                // findSet will be same after first directed edge is created, so reverse will not otherwise be created
+                mst.createEdge(mst.getL().get(e.fromVertex.index), mst.getL().get(e.toVertex.index), e.edgeData);
+                mst.createEdge(mst.getL().get(e.toVertex.index), mst.getL().get(e.fromVertex.index), e.edgeData);
+                // merge disjoint sets
                 disjointSet.union(e.fromVertex, e.toVertex);
             }
         }
-        return mstEdgeSet;
+        return mst;
     }
 }

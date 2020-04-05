@@ -6,43 +6,15 @@ https://stackoverflow.com/questions/38186332/comparable-cannot-be-converted-to-t
 
 package javaapp3;
 
-// note use of keyword extends intead of implements, it means the same as implements here
-class TreeElement<T extends Comparable<T>> implements Comparable<TreeElement<T>> {
-    T element;
-    TreeElement<T> parent;
-    TreeElement<T> left;
-    TreeElement<T> right;
-    @Override // what is this for?
-    public int compareTo(TreeElement<T> t) {
-        return (this.element).compareTo(t.element);
-    }
-    public TreeElement() {
-        element = null;
-        parent = null;
-        left = null;
-        right = null;
-    }
-    public TreeElement(T t) {
-        element = t;
-        parent = null;
-        left = null;
-        right = null;
-    }
-}
 
-public class Tree<T extends Comparable<T>> extends DataSet<T> {
-    TreeElement<T> root;
-    public int compare(T t1, T t2) {
-        return t1.compareTo(t2);
-    }
+public class Tree<T extends Comparable<T>> implements SetInf<T> {
+    private TreeElement<T> root;
+
     public Tree() {
         root = null;
     }
     public Tree(T element) {
-        root = new TreeElement(element);
-    }
-    public Tree(TreeElement<T> element) {
-        root = element;
+        root = new TreeElement<>(element);
     }
     
     // Specify what behavior is on failed insert, think of exceptions and how to handle them
@@ -53,15 +25,15 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
             return false;
         }
         if (root == null) {
-            root = new TreeElement(element);
+            root = new TreeElement<>(element);
 	}
 	else {
             TreeElement<T> temp = root;
             boolean done = false;
             while (!done) {
-		if (compare(element, temp.element) <= 0) {
+		if (element.compareTo(temp.element) < 0) {
                     if (temp.left == null) {
-			temp.left = new TreeElement(element);
+			temp.left = new TreeElement<>(element);
                         temp.left.parent = temp;
 			done = true;
                     }
@@ -69,9 +41,9 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
 			temp = temp.left;
                     }
 		}
-		else {
+		else if (element.compareTo(temp.element) > 0) {
                     if (temp.right == null) {
-			temp.right = new TreeElement(element);
+			temp.right = new TreeElement<>(element);
                         temp.right.parent = temp;
 			done = true;
                     }
@@ -79,32 +51,33 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
                         temp = temp.right;
                     }
 		}
+                else {
+                    return false; // duplicate element not allowed
+                }
             }
 	}
 	return true;
     }
+
     @Override
-    public T search(T element) {
+    public boolean search(T element) {
         if (root == null || element == null) {
-            return null;
+            return false;
         }
         else {
             TreeElement<T> temp = root;
             while (temp != null) {
-                if (compare(element, temp.element) == 0) {
-                    return temp.element;
-                }
-                else if (compare(element, temp.element) < 0) {
+                if (element.compareTo(temp.element) == 0)
+                    return true;
+                else if (element.compareTo(temp.element) < 0)
                     temp = temp.left;
-                }
-                else {
+                else
                     temp = temp.right;
-                }
             }
-            return null;
+            return false;
         }
     }
-    // Specify what behavior is on failed insert, think of exceptions and how to handle them
+
     @Override
     public boolean delete(T element) {
         if (root == null || element == null) {
@@ -113,15 +86,12 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
         else {
             TreeElement<T> temp1 = root;
             while (temp1 != null) {
-                if (compare(element, temp1.element) == 0) {
+                if (element.compareTo(temp1.element) == 0)
                     break;
-                }
-                else if (compare(element, temp1.element) < 0) {
+                else if (element.compareTo(temp1.element) < 0)
                     temp1 = temp1.left;
-                }
-                else {
+                else
                     temp1 = temp1.right;
-                }
             }
             if (temp1 == null) {
                 return false;
@@ -178,18 +148,33 @@ public class Tree<T extends Comparable<T>> extends DataSet<T> {
             // at this point, nothing should refer to the "deleted" node so it should hopefully be garbage collected
         }
     }
+    
+    private class TreeElement<T extends Comparable<T>> {
+        private T element;
+        private TreeElement<T> parent;
+        private TreeElement<T> left;
+        private TreeElement<T> right;
+
+        private TreeElement() {
+            element = null;
+            parent = null;
+            left = null;
+            right = null;
+        }
+        private TreeElement(T t) {
+            element = t;
+            parent = null;
+            left = null;
+            right = null;
+        }
+    }
 }
 
 
 
-
+// ideas:
+// add get method to get the element with the specified value
 // later on, work on better way of constructing these objects
-    //Tree() {
-    //    root = null;
-    //}
-    //Tree(T t) { 
-    //    root = t;
-    //}
 /*
     public static void createTree() {
         Tree t = new Tree();
