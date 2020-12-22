@@ -17,13 +17,15 @@ public class dsjntSetDataStruct<T> {
     public T findSet(T t) {
         dsjntSetElmnt<T> elem = objectToElem.get(t);
         dsjntSetElmnt<T> temp = elem;
+        dsjntSetElmnt<T> temp2 = temp;
         
         while (temp != temp.parent)
             temp = temp.parent;
         
         while (elem != temp) {
+            temp2 = elem.parent;
             elem.parent = temp;
-            elem = elem.parent;
+            elem = temp2;
         }
         return temp.element;
     }

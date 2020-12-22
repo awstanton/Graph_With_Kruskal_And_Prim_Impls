@@ -1,0 +1,308 @@
+// API that is very general and abstract and allows extension
+// Tree is a sample data structure, and an optimal greedy algorithm will be a sample algorithm
+
+// User constructs a graph and keeps track of vertices and edges and weights on the edges and orientation of the edges
+// User can compute connected components and return minimum spanning tree
+// User can use either Prim's or Kruskal's to find minimum spanning tree
+// Disjoint-set data structure also kept track of along with the graph for use in Kruskal's
+
+// object-oriented principles and design patterns to incorporate:
+// prefer composition to inheritance
+// nested class
+// 
+
+
+
+interface Set<T> {
+	boolean insert(T element);
+	T search(T element);
+	boolean delete(T element);
+}
+
+public abstract class DataSet<T> implements Set<T> {
+	private T elements[];
+	private int size;
+	public abstract boolean insert(T element);
+	public abstract T search(T element);
+	public abstract boolean delete(T element);
+}
+
+public class TreeElement<T implements Comparable<T>> {
+	public T element;
+	public TreeElement<T> left;
+	public TreeElement<T> right;
+	public int compare(TreeElement t) {
+		return this.element.compareTo(t.element);
+	}
+}
+
+public class Tree<T extends TreeElement> extends DataSet<T extends TreeElement> {
+	public T root;
+	public boolean compare(T t1, T t2) {
+		return t1.compareTo(t2);
+	}
+	public static void createTree<T>() {
+		elements = new T[1];
+		root = elements[0];
+		root.left = null;
+		root.right = null;
+	}
+	boolean insert(T element) {
+		if (root == null) {
+			root = element;
+		}
+		else {
+			T temp = root;
+			boolean done = false;
+			while (!done) {
+				if (compare(element, temp) <= 0) {
+					if (temp.left == null) {
+						temp.left = element;
+						done = true;
+					}
+					else {
+						temp = temp.left;
+					}
+				}
+				else {
+					if (temp.right == null) {
+						temp.right = element;
+						done = true;
+					}
+					else {
+						temp = temp.right;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	T search(T element) {
+		if (root == null) {
+			return null;
+		}
+		else {
+			T temp = root;
+			while (temp != null) {
+				if (compare(element, temp) == 0) {
+					return temp;
+				}
+				else if (compare(element, temp) < 0) {
+					temp = temp.left;
+				}
+				else {
+					temp = temp.left;
+				}
+				return false;
+			}
+		}
+	}
+	boolean delete(T element) {
+		if (root == null) {
+			return false;
+		}
+		else {
+			T temp1 = search(element);
+			if (temp1.left != null && temp1.right != null) {
+				T temp2 = temp1;
+				temp2 = temp2.left;
+				T temp3 = temp2;
+				while (temp2.right != null) {
+					temp3 = temp2;
+					temp2 = temp2.right;
+				}
+				temp3.right = null;
+				temp1 = temp2;
+				return true;
+			}
+			else if (temp1.left != null) {
+				temp1 = temp1.left;
+				return true;
+			}
+			else if (temp1.right != null) {
+				temp1 = temp1.right;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
+
+
+public class disjointSetElement<T> {
+	public disjointSetElement<T> parent;
+	public int rank;
+}
+
+
+class Ordered_Pair<T> {
+	T first;
+	T second;
+	T getFirst() {
+		return first;
+	}
+	T getSecond() {
+		return second;
+	}
+}
+
+class Graph<T> {
+	Set<Ordered_Pair<T>> edges;
+	Set<T> vertices;
+	Set<double> edgeWeights;
+	void addEdge();
+	void addVertex();
+}
+
+class disjointSetDataStructure<T extends disjointSetElement<T>> implements Set<T extends disjointSetElement<T>> {
+	void makeSet(T t) {
+		t.parent = t;
+		t.rank = 0;
+	}
+	T findSet<T extends disjointSetElement<T>>(T t) {
+		if (t != t.parent) {
+			t.parent = findSet(t.parent);
+		}
+		return t;
+	}
+	T link(T t1, T t2) {
+		if (t1.rank > t2.rank) {
+			t2.parent = t1;
+		}
+		else {
+			t1.parent = t2;
+			if (t1.rank == t2.rank) {
+				++t2.rank;
+			}
+		}
+	}
+	void union(T t1, T t2) {
+		link(findSet(t1),findSet(t2));
+	}
+}
+
+class Algorithms {
+	// all trees just use inorder traversal instead of sort
+		// need to ensure edges ordered by their weight though
+	// all hash tables maybe return an array for use or something
+	// idea - have a getnext method for traversing
+
+	void kruskalsAlgo<Tree<T>>(Graph g) {
+		//
+		T t = g.getTree().getRoot();
+		while () {
+			
+		}
+		
+		Set<T> minSpanTreeSubset;
+		
+		
+		
+	}
+	void kruskalsAlgo<Tree>() {
+		//preorder traversal - maybe override this method
+	}
+	void primsAlgo() {
+		
+	}
+}
+
+// after implementing the above, write a program that constructs graphs and runs the algorithms, then tweak to make it work well
+// and to see what else might work well with it
+
+// start by putting it all in one package, then consider how some pieces like the set interface may be put in another package
+
+
+
+
+class Outputter {
+	public void displayOptions() {
+		System.out.println("Choose a set:");
+		
+		System.out.println("Choose an object:");
+		
+		System.out.println("Choose an operation:");
+	}
+	public void displayAllOptions() {
+		
+	}
+	public void displaySomeOptions(ArrayList<Option> options) {
+		
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+Set s;
+s.insert(o1);
+s.insert(o2);
+s.insert(o3);
+s.search(o2);
+s.delete(o1);
+s.search(o1);
+s.insert(o3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+interface Event {
+	void callOperation(Set<T> s);
+}
+
+interface Schedule<T extends Event, V extends Algorithm> {
+	Schedule createSchedule<T, V>();
+}
+
+interface Runner {
+	runSequenceOfEvents;
+}
+
+interface Output {
+	void displayInputOptions();
+	void getOutputFromController();
+	void displayOutput();
+}
+
+interface Input {
+	void getInput();
+	void giveInputToController();
+}
+
+interface controller {
+	giveDataToObjectCreator;
+	askRunnerObjectToRun;
+}
+
+interface creator { // this could be generic
+	createObject;
+}
+
+interface Algorithm {
+	useInputToPerformOperations;
+}
+
+class event {
+	
+}
+
+class schedule {
+
+}
